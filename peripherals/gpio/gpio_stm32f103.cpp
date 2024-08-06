@@ -1,6 +1,5 @@
 #include "gpio_stm32f103.h"
 
-
 Pin::Pin(GPIO_TypeDef* const ap_port, const uint8_t a_pin_number, const Mode a_mode)
   : mp_port{ap_port}
   , m_pin_number{a_pin_number}
@@ -24,11 +23,11 @@ Pin::Pin(GPIO_TypeDef* const ap_port, const uint8_t a_pin_number, const Mode a_m
       RCC->APB2ENR |=  RCC_APB2ENR_IOPDEN;
     break;
     
-    #ifndef STM32F103C6T6
+#if !defined (STM32F10X_LD) && !defined (STM32F10X_LD_VL)
     case GPIOE_BASE:
       RCC->APB2ENR |= RCC_APB2ENR_IOPEEN;
     break;
-    #endif //#ifndef STM32F103C6T6
+#endif /* STM32F10X_LD && STM32F10X_LD_VL */
     
 #if defined (STM32F10X_HD) || defined (STM32F10X_XL)
     case GPIOF_BASE:
@@ -40,7 +39,6 @@ Pin::Pin(GPIO_TypeDef* const ap_port, const uint8_t a_pin_number, const Mode a_m
     break;
 #endif //defined (STM32F10X_HD) || defined (STM32F10X_XL)
   }
-  
   SetMode(m_mode);
 }
 
