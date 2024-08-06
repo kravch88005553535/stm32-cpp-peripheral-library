@@ -1,4 +1,4 @@
-#include "i2c.h"
+#include "i2c_stm32f103.h"
 
 I2C::I2C(I2C_TypeDef* const ap_i2c, uint32_t a_i2c_clock, Speed a_speed, Address_format a_address_format)
   : mp_i2c{ap_i2c}
@@ -10,11 +10,11 @@ I2C::I2C(I2C_TypeDef* const ap_i2c, uint32_t a_i2c_clock, Speed a_speed, Address
       RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
     break;
     
-#ifndef STM32F103C6T6
+#if !defined (STM32F10X_LD) && !defined (STM32F10X_LD_VL)
     case I2C2_BASE:
       RCC->APB1ENR |= RCC_APB1ENR_I2C2EN;
     break;
-#endif //#ifndef STM32F103C6T6
+#endif //!defined (STM32F10X_LD) && !defined (STM32F10X_LD_VL)
   }
 
   mp_i2c->CR1 |= I2C_CR1_SWRST;

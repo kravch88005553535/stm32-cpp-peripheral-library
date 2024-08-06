@@ -6,9 +6,8 @@
 class I2C_Interface
 {
 public:
-virtual void Lock() = 0;
-virtual void Unlock() = 0;
-virtual bool IsLocked() = 0;
+virtual void TransmitData(const uint8_t a_transmitdata) = 0;
+virtual void RecieveData(uint8_t* const ap_recievedata) = 0;
 };
 
 class I2C: public I2C_Interface 
