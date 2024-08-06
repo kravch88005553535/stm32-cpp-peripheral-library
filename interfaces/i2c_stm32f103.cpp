@@ -50,6 +50,9 @@ void I2C::GenerateStopCondition()
 
 void I2C::TransmitDeviceAddress(const uint16_t a_address) //add r/2w bit & rewrite this function
 {
+  while(a_address > 0b1111111111)
+  {/* ERROR! address is not in 10-bit range*/};
+  
   switch (static_cast <uint32_t>(m_address_format))
   {
     case Address_format_7bit:
@@ -60,9 +63,15 @@ void I2C::TransmitDeviceAddress(const uint16_t a_address) //add r/2w bit & rewri
     break;
     
     case Address_format_10bit:
-//      const uint8_t header = (a_address & 0xFF00) >> 8;
-//      mp_i2c->DR = header;
-//      mp_i2c->SR1;
+      constexpr uint8_t header_mask{0b11110000};
+      const uint8_t header{static_cast<uint8_t>(((a_address & 0xFF00) >> 7) | header_mask)};
+      mp_i2c->DR = header;
+      mp_i2c->SR1;
+      mp_i2c->DR = (a_address & 0xFF);
+      while (!(mp_i2c->SR1 & I2C_SR1_ADD10));
+      while (!(mp_i2c->SR1 & I2C_SR1_ADDR));
+      mp_i2c->SR1;
+      mp_i2c->SR2;
     break;
   }
 }

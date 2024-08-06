@@ -1,0 +1,1 @@
+-- not completed -- check 10 bit address transmission mode in i2c_stm32f10x.h
