@@ -28,7 +28,7 @@ Program_timer::Program_timer(TimerType a_timertype, uint32_t a_interval_ms)
 
 void Program_timer::Start()
 {
-  if (m_status  == TimerStatus_stopped)
+  if(m_status  == TimerStatus_stopped)
   {
     ++timers_total_count;
     SysTick->CTRL |= SysTick_CTRL_ENABLE;
@@ -52,7 +52,7 @@ void Program_timer::Stop()
 
 bool Program_timer::Check()
 {
-  if (m_status == TimerStatus_started)
+  if(m_status == TimerStatus_started)
   {
     if(overflows_number > (m_previous_overflow_number + m_interval_ms))
     {
@@ -62,17 +62,18 @@ bool Program_timer::Check()
   }
   return false;
 }
-
+void Program_timer::Reload()
+{
+  m_previous_overflow_number = overflows_number;
+}
 bool Program_timer::IsStarted()
 {
   return m_status == TimerStatus_started ? true : false;
 }
-
 void Program_timer::SetInterval_ms(uint32_t a_interval_ms)
 {
   m_interval_ms = a_interval_ms;
 }
-
 uint32_t Program_timer::GetInterval_ms()
 {
   return m_interval_ms;

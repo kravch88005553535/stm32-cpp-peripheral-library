@@ -30,12 +30,12 @@ public:
   void Start();
   void Stop();
   bool Check();
+  void Reload();
   bool IsStarted();
   volatile static inline uint64_t overflows_number{0};
 private:
   Program_timer() = delete;
   
-
   TimerType                   m_timertype;
   TimerStatus                 m_status;
   volatile static inline bool  systick_is_initialized{0};  
