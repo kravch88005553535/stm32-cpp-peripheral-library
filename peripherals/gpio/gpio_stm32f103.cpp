@@ -244,7 +244,10 @@ void Pin::SetSpeed(const Speed a_speed)
 
 Pin::Speed Pin::GetSpeed() const
 {
-  return Speed_2Mhz;
+  if(m_pin_number < 8)
+    return static_cast<Speed>((mp_port->CRL >> (m_pin_number*4)) & 0b11);
+  else
+    return static_cast<Speed>((mp_port->CRH >> ((m_pin_number-8)*4)) & 0b11);
 }
 
 bool Pin::Lock()
