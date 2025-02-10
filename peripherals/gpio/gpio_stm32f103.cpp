@@ -228,6 +228,25 @@ Pin::Mode Pin::GetMode() const
   return m_mode;
 }
 
+void Pin::SetSpeed(const Speed a_speed)
+{
+  if(m_pin_number < 8)
+  {
+    mp_port->CRL &= ~(GPIO_CRL_MODE0 << (m_pin_number*4));
+    mp_port->CRL |= a_speed << (m_pin_number*4);
+  }
+  else
+  {
+    mp_port->CRH &= ~(GPIO_CRH_MODE8 << ((m_pin_number-8)*4));
+    mp_port->CRH |= a_speed << ((m_pin_number-8)*4);
+  }
+}
+
+Pin::Speed Pin::GetSpeed() const
+{
+  return Speed_2Mhz;
+}
+
 bool Pin::Lock()
 {
   volatile uint32_t lock_register{mp_port->LCKR | GPIO_LCKR_LCKK | GPIO_LCKR_LCK0 << m_pin_number};

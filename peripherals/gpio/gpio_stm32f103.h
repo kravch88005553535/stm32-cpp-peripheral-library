@@ -19,6 +19,14 @@ public:
     mode_alternate_function_open_drain,
     mode_analog
   };
+  
+  enum Speed: uint8_t
+  {
+    Speed_2Mhz  = 0b10,
+    Speed_10Mhz = 0b01,
+    Speed_50Mhz = 0b11
+  };
+  
   explicit Pin(GPIO_TypeDef* const ap_port, const uint8_t a_pin_number, const Mode a_mode);
   ~Pin();
   void Set();
@@ -27,6 +35,8 @@ public:
   void Toggle();
   void SetMode(const Mode a_mode);
   Mode GetMode() const;
+  void SetSpeed(const Speed a_speed);
+  Speed GetSpeed() const;
   bool Lock();
   bool IsLocked();
 private:
