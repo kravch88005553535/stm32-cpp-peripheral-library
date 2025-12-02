@@ -8,14 +8,14 @@ Program_timer::Program_timer(TimerType a_timertype)
 {
   timers_total_count++;
   
-  if(!systick_is_initialized)
+  if(!is_systick_initialized)
   {
     constexpr auto systick_1sec_tick_value{9000000};
     SysTick->LOAD = systick_1sec_tick_value / 1000;
     SysTick->CTRL |= SysTick_CTRL_TICKINT;
     NVIC_EnableIRQ(SysTick_IRQn);
     SysTick->CTRL &= ~SysTick_CTRL_CLKSOURCE;
-    systick_is_initialized = true;    
+    is_systick_initialized = true;    
   }
 }
 
@@ -96,6 +96,10 @@ Program_timer::~Program_timer()
 {
 }
 
+void ModifyOverflowsNumber()
+{
+  Program_timer::overflows_number++;
+}
 #ifdef __cplusplus
 extern "C" 
 {
@@ -103,7 +107,7 @@ extern "C"
     
 void SysTick_Handler()
 {
-  Program_timer::overflows_number++;
+  ModifyOverflowsNumber();
 }
   
 #ifdef __cplusplus

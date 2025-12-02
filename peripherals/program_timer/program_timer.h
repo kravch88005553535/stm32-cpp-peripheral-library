@@ -3,6 +3,7 @@
 
 #include <stm32f10x.h>
 
+//Определение класса программного таймера
 class Program_timer
 {
 public:
@@ -32,15 +33,16 @@ public:
   bool Check();
   void Reload();
   bool IsStarted();
-  volatile static inline uint64_t overflows_number{0};
+  friend void ModifyOverflowsNumber();
+  
 private:
   Program_timer() = delete;
   
-  TimerType                   m_timertype;
-  TimerStatus                 m_status;
-  volatile static inline bool  systick_is_initialized{0};  
-  volatile static inline auto  timers_total_count{0};
-  
+  TimerType                       m_timertype;
+  TimerStatus                     m_status;
+  volatile static inline bool     is_systick_initialized{0};  
+  volatile static inline auto     timers_total_count{0};
+  volatile static inline uint64_t overflows_number{0};
   uint32_t m_interval_ms;
   uint64_t m_previous_overflow_number;
 };
