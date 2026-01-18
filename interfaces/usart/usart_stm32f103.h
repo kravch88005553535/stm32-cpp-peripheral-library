@@ -2,6 +2,7 @@
 #define __USART_H__
 
 #include <stm32f10x.h>
+#include <cstdlib>
 
 class Usart
 {
@@ -62,10 +63,24 @@ class Usart
   void SetStopBits(StopBits a_stopbits);
   void SetParityControl(ParityControl a_paritycontrol);
   uint32_t GetBaudrate();
+  void EnableTransmitter();
+  void DisableTransmitter();
+  void EnableReciever();
+  void DisableReciever();  
+  void EnableDmaTransmitter();
+  void DisableDmaTransmitter();
+  void EnableDmaReciever();
+  void DisableDmaReciever();
+  
   void Transmit(const char* ap_data);
   void Transmit(const uint32_t a_data);
-  bool Recieve(uint8_t* const ap_data);
+  void Transmit(const uint8_t* ap_data, size_t a_size);
+  void Recieve(uint8_t* ap_data);
+  
+
+  
   void ClearTerminal();
+  uint32_t GetPeripheralAddress();
 private:
   Usart() = delete;
   USART_TypeDef* mp_usart;

@@ -3,7 +3,6 @@
 
 #include <stm32f10x.h>
 
-//Определение класса программного таймера
 class Program_timer
 {
 public:

@@ -102,21 +102,57 @@ uint32_t Usart::GetBaudrate()
 //  rcc.GetPeripheralClock(mp_usart) / 8 / (2 - static_cast<bool>(mp_usart->CR1 & USART_CR1_OVER8)) / usartdiv
   return 0;
 }
+
+void Usart::EnableTransmitter()
+{
+  mp_usart->CR1 |= USART_CR1_TE;
+}
+
+void Usart::DisableTransmitter()
+{
+  mp_usart->CR1 &= ~USART_CR1_TE;
+}
+
+void Usart::EnableReciever()
+{
+  mp_usart->CR1 |= USART_CR1_RE;
+}
+
+void Usart::DisableReciever()
+{
+  mp_usart->CR1 &= ~USART_CR1_RE;
+}
+
+void Usart::EnableDmaTransmitter()
+{
+  mp_usart->CR3 |= USART_CR3_DMAT;
+}
+void Usart::DisableDmaTransmitter()
+{
+  mp_usart->CR3 &= ~USART_CR3_DMAT;
+}
+void Usart::EnableDmaReciever()
+{
+  mp_usart->CR3 |= USART_CR3_DMAR;
+}
+
+void Usart::DisableDmaReciever()
+{
+  mp_usart->CR3 &= ~USART_CR3_DMAR;
+}
+
 void Usart::Transmit(const char* ap_data)
 {
   m_mode = Mode::Mode_TX;
-  mp_usart->CR1 |= USART_CR1_TE;
+  EnableTransmitter();
   while(*ap_data)
   {
     while (!(mp_usart->SR & USART_SR_TXE));
     mp_usart->DR = *ap_data;
     ap_data++;
   }
-  
-  while(!(mp_usart->SR & USART_SR_TC));
-  
-  mp_usart->SR &= ~USART_SR_TC;
   m_mode = Mode::Mode_Idle;
+  DisableTransmitter();
 }
 
 void Usart::Transmit(const uint32_t a_data)
@@ -131,8 +167,8 @@ void Usart::Transmit(const uint32_t a_data)
   }
   
   temp_data = a_data;
-  mp_usart->CR1 |= USART_CR1_TE;
-  
+  EnableTransmitter();
+
   while(number_length--)
   {
     while (!(mp_usart->SR & USART_SR_TXE));
@@ -140,21 +176,29 @@ void Usart::Transmit(const uint32_t a_data)
     mp_usart->DR = send_data;
     temp_data = temp_data % uint32_t(pow(10, number_length));
   }
+  
+  DisableTransmitter();
 }
 
-bool Usart::Recieve(uint8_t* const ap_data)
+void Usart::Transmit(const uint8_t* ap_data, size_t a_size)
 {
-  if(mp_usart->SR & USART_SR_RXNE)
+  EnableTransmitter();
+  while(a_size--)
   {
-    *ap_data = mp_usart->DR;
-    return true;
+    while (!(mp_usart->SR & USART_SR_TXE));
+    mp_usart->DR = *ap_data;
+    ap_data++;
   }
-  return false;
+  DisableTransmitter();
 }
 
 void Usart::ClearTerminal()
 {
-  const char* array = new char[]{0x1B, 0x5B, 0x32, 0x4A, 0};
+  constexpr char array[] = {0x1B, 0x5B, 0x32, 0x4A, 0};
   Transmit(array);
-  delete[] array;
+}
+
+uint32_t Usart::GetPeripheralAddress()
+{
+  return reinterpret_cast<uint32_t>(mp_usart);
 }
