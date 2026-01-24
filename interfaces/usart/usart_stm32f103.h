@@ -72,6 +72,10 @@ class Usart
   void EnableDmaReciever();
   void DisableDmaReciever();
   
+  bool IsTransferComplete();
+  void ClearTransferCompleteFlag();
+  bool IsIdleLineDetected();
+  
   void Transmit(const char* ap_data);
   void Transmit(const uint32_t a_data);
   void Transmit(const uint8_t* ap_data, size_t a_size);
@@ -80,7 +84,7 @@ class Usart
 
   
   void ClearTerminal();
-  uint32_t GetPeripheralAddress();
+  uint32_t GetPeripheralAddress() const;
 private:
   Usart() = delete;
   USART_TypeDef* mp_usart;

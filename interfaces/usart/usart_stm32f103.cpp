@@ -141,6 +141,21 @@ void Usart::DisableDmaReciever()
   mp_usart->CR3 &= ~USART_CR3_DMAR;
 }
 
+bool Usart::IsTransferComplete()
+{
+  return mp_usart->SR & USART_SR_TC;
+}
+
+void Usart::ClearTransferCompleteFlag()
+{
+  mp_usart->SR &= ~USART_SR_TC;
+}
+
+bool Usart::IsIdleLineDetected()
+{
+  return mp_usart->SR & USART_SR_IDLE;
+}
+
 void Usart::Transmit(const char* ap_data)
 {
   m_mode = Mode::Mode_TX;
@@ -198,7 +213,7 @@ void Usart::ClearTerminal()
   Transmit(array);
 }
 
-uint32_t Usart::GetPeripheralAddress()
+uint32_t Usart::GetPeripheralAddress() const 
 {
   return reinterpret_cast<uint32_t>(mp_usart);
 }
